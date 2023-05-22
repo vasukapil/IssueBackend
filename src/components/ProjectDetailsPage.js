@@ -17,7 +17,9 @@ const ProjectDetailPage = () => {
       id : "1"
     }
     axios
-      .get("http://localhost:5000/bug",bugData)
+      .get("http://localhost:5000/bug",{ params: {
+        id:params.id
+      }})
       .then((response) => {
         setBugs(response.data);
         console.log(response.data);
@@ -53,19 +55,22 @@ const ProjectDetailPage = () => {
     console.log("Search Query:", searchQuery);
   };
 
+  // console.log(bugs)
+
   // Filter and search bugs based on selected labels, author, and search query
-  // const filteredBugs = bugs.filter((bug) => {
-  //   const hasSelectedLabels =
-  //     selectedLabels.length === 0 ||
-  //     selectedLabels.every((label) => bug.labels.includes(label));
-  //   const hasSelectedAuthor =
-  //     selectedAuthor === "" || bug.author === selectedAuthor;
-  //   const matchesSearchQuery =
-  //     searchQuery === "" ||
-  //     bug.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //     bug.description.toLowerCase().includes(searchQuery.toLowerCase());
-  //   return hasSelectedLabels && hasSelectedAuthor && matchesSearchQuery;
-  // });
+  const filteredBugs = bugs?.data?.filter((bug) => {
+    const hasSelectedLabels =
+      selectedLabels.length === 0 ||
+      selectedLabels.every((label) => bug.labels.includes(label));
+    const hasSelectedAuthor =
+      selectedAuthor === "" || bug.author === selectedAuthor;
+    const matchesSearchQuery =
+      searchQuery === "" ||
+      bug?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      bug?.description?.toLowerCase().includes(searchQuery.toLowerCase());
+    return hasSelectedLabels && hasSelectedAuthor && matchesSearchQuery;
+  });
+  console.log(filteredBugs)
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -139,8 +144,8 @@ const ProjectDetailPage = () => {
       {/* TODO: Render the bug list here */}
       <div>
         <ul>
-          {bugs?.data?.length > 0 &&
-            bugs?.data.map((bug) => (
+          {filteredBugs?.length > 0 &&
+            filteredBugs?.map((bug) => (
               <li key={bug.id} className="border border-gray-300 p-4 mb-4">
                 <h3 className="text-lg font-semibold mb-2">{bug.title}</h3>
                 <p className="text-gray-700 mb-1">
@@ -149,7 +154,7 @@ const ProjectDetailPage = () => {
                 <p className="text-gray-700 mb-1">
                   <span className="font-semibold">Labels:</span>{" "}
                   {/* {bug.label} */}
-                  {bug?.label.length > 0 &&
+                  {bug?.label?.length > 0 &&
                     bug?.label?.map((data) => data + ", ")}
                 </p>
                 {/* Add more bug details as needed */}
